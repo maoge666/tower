@@ -89,24 +89,27 @@ export default {
         box.x = oringin.x + (line * Math.sin(-l))
         box.y = line * Math.cos(-l)
       }
-      console.log(box.x)
       let downBox = new Shape('image', {x: box.x, y: box.y, w: this.downBlockImage.width * 0.5, h: this.downBlockImage.height * 0.5, file: this.downBlockImage.path}, 'fill', true)
       this.wxCanvas.add(downBox)
       const self = this
-      downBox.animate({'x': box.x, 'y': this.systemInfo.windowHeight - downBox.Shape.Option.h / 2}, {duration: 500,
+      const fallHeight = this.boxs.length <= 3 ? this.systemInfo.windowHeight - downBox.Shape.Option.h / 2 - this.boxs.length * downBox.Shape.Option.h : this.systemInfo.windowHeight - downBox.Shape.Option.h / 2 - 3 * downBox.Shape.Option.h
+      downBox.animate({'x': box.x, 'y': fallHeight}, {duration: 500,
         easing: 'easeOutExpo',
         onStart: function () {
-
-        },
-        onEnd: function () {
-          console.log(this)
+          const boxWidth = this.object.Shape.Option.w
           if (self.boxs.length > 0) {
-            if (Math.abs(this.atrribute.x - self.boxs[0].atrribute.x)) {
-
+            if (Math.abs(this.atrribute.x - self.boxs[0].atrribute.x) <= boxWidth) {
+              self.boxs[self.boxs.length] = this
+              console.log(self.boxs)
+            } else {
+              console.log('down')
             }
           } else {
             self.boxs[0] = this
           }
+        },
+        onEnd: function () {
+
         }}).start()
     }
   },
